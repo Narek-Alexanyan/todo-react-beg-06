@@ -32,7 +32,7 @@ class ToDo extends Component {
         <Row>
           <Col>
             <h1 className="text-center">ToDo List</h1>
-            <AddTask  xs={12} handleSubmit={this.handleSubmit} />
+            <AddTask  handleSubmit={this.handleSubmit} />
           </Col>
         </Row>
         <Row className="mt-5 justify-content-center">
