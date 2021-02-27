@@ -17,7 +17,7 @@ class AddTask extends Component {
     });
   };
 
-  keyDown = (event) => {
+  keyPress = (event) => {
     if(event.key === 'Enter') {
       this.handleClick();
     }
@@ -58,7 +58,7 @@ class AddTask extends Component {
           aria-label="Write Task"
           value={this.state.inputValue}
           onChange={this.handleChange}
-          onKeyDown={this.keyDown}
+          onKeyPress={this.keyPress}
         />
         <Button variant="outline-primary" onClick={this.handleClick}>
           Add Task
