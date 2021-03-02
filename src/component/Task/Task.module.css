@@ -11,3 +11,7 @@
     height: 24px !important;
     margin-left: auto;
 }
+
+.checked {
+    background-color: rgba(128, 128, 128, 0.3) !important;
+}

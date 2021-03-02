@@ -2,8 +2,7 @@ import React, { Component } from "react";
 
 import Styles from "./AddTask.module.css";
 
-import { Button, FormControl, Alert} from "react-bootstrap";
-
+import { Button, FormControl, Alert } from "react-bootstrap";
 
 class AddTask extends Component {
   state = {
@@ -18,10 +17,10 @@ class AddTask extends Component {
   };
 
   keyPress = (event) => {
-    if(event.key === 'Enter') {
+    if (event.key === "Enter") {
       this.handleClick();
     }
-  }
+  };
 
   handleClick = () => {
     if (this.state.inputValue === "") {
@@ -40,30 +39,34 @@ class AddTask extends Component {
     });
   };
 
-  
-
   render() {
-    const styles = [Styles.Alert__danger, Styles.slide__right]
+    const { isAnyTaskChecked } = this.props;
+    const styles = [Styles.Alert__danger, Styles.slide__right];
     return (
       <>
-      {this.state.errorMessage && (
-            <Alert className={ styles.join(' ') } variant="danger">
-              Input value is empty!
-            </Alert>
+        {this.state.errorMessage && (
+          <Alert className={styles.join(" ")} variant="danger">
+            Input value is empty!
+          </Alert>
         )}
-      <div className={Styles.addTask}>
-        <FormControl
-          aria-describedby="basic-addon1"
-          placeholder="Write Task"
-          aria-label="Write Task"
-          value={this.state.inputValue}
-          onChange={this.handleChange}
-          onKeyPress={this.keyPress}
-        />
-        <Button variant="outline-primary" onClick={this.handleClick}>
-          Add Task
-        </Button>
-      </div>
+        <div className={Styles.addTask}>
+          <FormControl
+            aria-describedby="basic-addon1"
+            placeholder="Write Task"
+            aria-label="Write Task"
+            value={this.state.inputValue}
+            onChange={this.handleChange}
+            onKeyPress={this.keyPress}
+            disabled={isAnyTaskChecked}
+          />
+          <Button
+            variant="outline-primary"
+            onClick={this.handleClick}
+            disabled={isAnyTaskChecked}
+          >
+            Add Task
+          </Button>
+        </div>
       </>
     );
   }

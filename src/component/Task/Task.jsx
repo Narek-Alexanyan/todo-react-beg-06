@@ -1,10 +1,17 @@
 import Styles from "./Task.module.css";
 
-import { Card, Button, FormControl} from "react-bootstrap";
+import { Card, Button, FormControl } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 
-function Task({ task, index, removeTask }) {
+function Task({
+  task,
+  index,
+  removeTask,
+  handleToggleCheckTask,
+  isAnyTaskChecked,
+  isChecked,
+}) {
   let addClass = () => {
     if (index % 2) {
       return Styles.card__bg1;
@@ -13,17 +20,29 @@ function Task({ task, index, removeTask }) {
     }
   };
 
+  const classes = [addClass()];
+  if (isChecked) classes.push(Styles.checked);
+
   return (
-    <Card className={addClass()}>
+    <Card className={classes.join(' ')}>
       <Card.Body>
-        <FormControl type='checkbox' className={Styles.Card__checkbox}/>
+        <FormControl
+          type="checkbox"
+          className={Styles.Card__checkbox}
+          onClick={() => handleToggleCheckTask(task._id)}
+        />
         <Card.Text>
           {index + 1}. {task.title}
         </Card.Text>
-        <Button variant="warning">
+        <Button variant="warning" disabled={isAnyTaskChecked}>
           <FontAwesomeIcon icon={faEdit} />
         </Button>
-        <Button variant="danger" className="ml-3" onClick={(e) => removeTask(task._id)}>
+        <Button
+          variant="danger"
+          className="ml-3"
+          onClick={(e) => removeTask(task._id)}
+          disabled={isAnyTaskChecked}
+        >
           <FontAwesomeIcon icon={faTrash} />
         </Button>
       </Card.Body>
