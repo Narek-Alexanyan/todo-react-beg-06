@@ -1,3 +1,5 @@
+import React from "react";
+
 import Styles from "./Task.module.css";
 
 import { Card, Button, FormControl } from "react-bootstrap";
@@ -24,12 +26,13 @@ function Task({
   if (isChecked) classes.push(Styles.checked);
 
   return (
-    <Card className={classes.join(' ')}>
+    <Card className={classes.join(" ")}>
       <Card.Body>
         <FormControl
           type="checkbox"
           className={Styles.Card__checkbox}
-          onClick={() => handleToggleCheckTask(task._id)}
+          onChange={() => handleToggleCheckTask(task._id, isChecked)}
+          checked={isChecked}
         />
         <Card.Text>
           {index + 1}. {task.title}
@@ -50,4 +53,4 @@ function Task({
   );
 }
 
-export default Task;
+export default React.memo(Task);
