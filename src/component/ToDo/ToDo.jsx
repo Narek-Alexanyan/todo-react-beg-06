@@ -27,16 +27,17 @@ class ToDo extends Component {
       },
     ],
     checkedTasks: new Set(),
-    buttonValue: "Check All",
   };
   ColStyles = ["mt-2", "mb-2", "slide-bottom"];
 
   handleSubmit = (value) => {
-    const tasks = [...this.state.tasks];
-    tasks.push({
-      title: value,
-      _id: idGenerator(),
-    });
+    const tasks = [...this.state.tasks,
+      {
+        title: value,
+        _id: idGenerator(),
+      }
+    ];
+    // tasks.push();
     this.setState({
       tasks,
     });
@@ -44,12 +45,7 @@ class ToDo extends Component {
 
   handleToggleCheckTask = (id, checked) => {
     let checkedTasks = new Set(this.state.checkedTasks);
-    let { buttonValue } = this.state;
-    if (!checked) {
-      buttonValue = "Remove Checked";
-    } else {
-      buttonValue = "Check All";
-    }
+
     if (!checkedTasks.has(id)) {
       checkedTasks.add(id);
     } else {
@@ -58,20 +54,17 @@ class ToDo extends Component {
 
     this.setState({
       checkedTasks,
-      buttonValue,
     });
   };
 
   handleDeleteCheckedTasks = () => {
-    let { buttonValue, checkedTasks } = this.state;
+    let { checkedTasks } = this.state;
     let tasks = [...this.state.tasks];
     tasks = tasks.filter((task) => !checkedTasks.has(task._id));
-    buttonValue = "Check All";
 
     this.setState({
       tasks,
       checkedTasks: new Set(),
-      buttonValue,
     });
   };
 
@@ -86,24 +79,20 @@ class ToDo extends Component {
 
   handleCheckAllTasks = () => {
     let checkedTasks = new Set(this.state.checkedTasks);
-    let { buttonValue, tasks } = this.state;
+    let { tasks } = this.state;
     if (checkedTasks.size === 0) {
       tasks.forEach((item) => checkedTasks.add(item._id));
-      buttonValue = "Remove Checked";
     } else {
       tasks.forEach((item) => checkedTasks.delete(item._id));
-      buttonValue = "Check All";
     }
 
     this.setState({
-      buttonValue,
       checkedTasks,
     });
   };
 
   render() {
-    const { checkedTasks, tasks, buttonValue } = this.state;
-    // console.log(checkedTasks);
+    const { checkedTasks, tasks } = this.state;
     const tasksList = tasks.map((task, index) => {
       return (
         <Col
@@ -137,7 +126,7 @@ class ToDo extends Component {
           </Col>
         </Row>
         <Row className="mt-5 justify-content-center">
-          {tasksList.length ? tasksList : <h2>There are no Tasks !</h2>}
+          {tasksList.length ? tasksList : <h2 className="no__tasks slide-in-top">There are no tasks yet!</h2>}
         </Row>
         <Row className="justify-content-center mt-5">
           <Button
@@ -160,7 +149,7 @@ class ToDo extends Component {
               className="mr-2"
               icon={faCheckSquare}
             ></FontAwesomeIcon>
-            {buttonValue}
+            {checkedTasks.size === 0 ? "Check All" : "Remove Checked"}
           </Button>
         </Row>
       </Container>

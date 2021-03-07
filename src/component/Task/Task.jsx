@@ -22,6 +22,8 @@ function Task({
     }
   };
 
+
+
   const classes = [addClass()];
   if (isChecked) classes.push(Styles.checked);
 
@@ -43,7 +45,7 @@ function Task({
         <Button
           variant="danger"
           className="ml-3"
-          onClick={(e) => removeTask(task._id)}
+          onClick={() => removeTask(task._id)}
           disabled={isAnyTaskChecked}
         >
           <FontAwesomeIcon icon={faTrash} />
