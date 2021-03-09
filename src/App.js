@@ -1,5 +1,7 @@
 import './App.css';
-import ToDo from './component/ToDo';
+import ToDo from './component/ToDo/ToDo';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
