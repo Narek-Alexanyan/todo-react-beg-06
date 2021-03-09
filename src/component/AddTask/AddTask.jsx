@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
 
 import Styles from "./AddTask.module.css";
 
@@ -70,6 +71,11 @@ class AddTask extends Component {
       </>
     );
   }
+}
+
+AddTask.protoTypes = {
+  handleSubmit: PropTypes.func,
+  isAnyTaskChecked: PropTypes.bool
 }
 
 export default AddTask;

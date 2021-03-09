@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 
 import Styles from "./Task.module.css";
 
@@ -53,6 +54,15 @@ function Task({
       </Card.Body>
     </Card>
   );
+}
+
+Task.propTypes = {
+  task: PropTypes.object,
+  index: PropTypes.number,
+  removeTask: PropTypes.func,
+  handleToggleCheckTask: PropTypes.func,
+  isAnyTaskChecked: PropTypes.bool,
+  isChecked: PropTypes.bool
 }
 
 export default React.memo(Task);

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
 import AddTask from "../AddTask/AddTask";
 import Task from "../Task/Task";
 import idGenerator from "../../idGenerator";
@@ -155,5 +156,10 @@ class ToDo extends Component {
       </Container>
     );
   }
+}
+
+ToDo.propTypes = {
+  Task: PropTypes.element,
+  AddTask: PropTypes.element
 }
 export default ToDo;
