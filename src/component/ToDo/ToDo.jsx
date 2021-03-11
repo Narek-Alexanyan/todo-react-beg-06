@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
-import AddTask from "../AddTask/AddTask";
+// import PropTypes from "prop-types";
+import AddTaskModal from "../AddTaskModal/AddTaskModal";
 import Task from "../Task/Task";
 import idGenerator from "../../idGenerator";
 
@@ -10,6 +10,7 @@ import { faCheckSquare, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 import "./ToDo.scss";
+import Confirm from "../Confirm";
 
 class ToDo extends Component {
   state = {
@@ -17,28 +18,33 @@ class ToDo extends Component {
       {
         _id: idGenerator(),
         title: "test-1",
+        description: "TAsk 1 description",
       },
       {
         _id: idGenerator(),
         title: "test-2",
+        description: "TAsk 2 description",
       },
       {
         _id: idGenerator(),
         title: "test-3",
+        description: "TAsk 4 description",
       },
     ],
     checkedTasks: new Set(),
+    isOpenModalTask: false,
+    showConfirm: false
   };
   ColStyles = ["mt-2", "mb-2", "slide-bottom"];
 
   handleSubmit = (value) => {
-    const tasks = [...this.state.tasks,
+    const tasks = [
+      ...this.state.tasks,
       {
         title: value,
         _id: idGenerator(),
-      }
+      },
     ];
-    // tasks.push();
     this.setState({
       tasks,
     });
@@ -66,6 +72,7 @@ class ToDo extends Component {
     this.setState({
       tasks,
       checkedTasks: new Set(),
+      showConfirm: false
     });
   };
 
@@ -92,8 +99,31 @@ class ToDo extends Component {
     });
   };
 
+  toggleOpenAddTaskModal = () => {
+    this.setState({
+      isOpenModalTask: !this.state.isOpenModalTask,
+    });
+  };
+
+  handleSubmit = (formData) => {
+    const tasks = [...this.state.tasks];
+    tasks.push({
+      ...formData,
+      _id: idGenerator()
+    });
+    this.setState({
+      tasks
+    })
+  }
+
+  toggleConfirm = ()=> {
+    this.setState({
+      showConfirm: !this.state.showConfirm
+    })
+  }
+
   render() {
-    const { checkedTasks, tasks } = this.state;
+    const { checkedTasks, tasks, isOpenModalTask, showConfirm } = this.state;
     const tasksList = tasks.map((task, index) => {
       return (
         <Col
@@ -116,50 +146,61 @@ class ToDo extends Component {
       );
     });
     return (
-      <Container>
-        <Row>
-          <Col>
-            <h1 className="text-center tracking-in-contract-bck">ToDo List</h1>
-            <AddTask
-              handleSubmit={this.handleSubmit}
-              isAnyTaskChecked={!!checkedTasks.size}
-            />
-          </Col>
-        </Row>
-        <Row className="mt-5 justify-content-center">
-          {tasksList.length ? tasksList : <h2 className="no__tasks slide-in-top">There are no tasks yet!</h2>}
-        </Row>
-        <Row className="justify-content-center mt-5">
-          <Button
-            variant="danger"
-            onClick={this.handleDeleteCheckedTasks}
-            disabled={!!!checkedTasks.size}
-          >
-            <FontAwesomeIcon
-              className="mr-2"
-              icon={faTrashAlt}
-            ></FontAwesomeIcon>
-            Delete selected tasks
-          </Button>
-          <Button
-            className="ml-3"
-            variant="primary"
-            onClick={this.handleCheckAllTasks}
-          >
-            <FontAwesomeIcon
-              className="mr-2"
-              icon={faCheckSquare}
-            ></FontAwesomeIcon>
-            {checkedTasks.size === 0 ? "Check All" : "Remove Checked"}
-          </Button>
-        </Row>
-      </Container>
+      <>
+        <Container>
+          <Row className="justify-content-center flex-column">
+              <h1 className="text-center tracking-in-contract-bck">
+                ToDo List
+              </h1>
+              <Button className="ml-auto mr-auto" onClick={this.toggleOpenAddTaskModal}>Task Modal</Button>
+          </Row>
+          <Row className="mt-5 justify-content-center">
+            {tasksList.length ? (
+              tasksList
+            ) : (
+              <h2 className="no__tasks slide-in-top">
+                There are no tasks yet!
+              </h2>
+            )}
+          </Row>
+          <Row className="justify-content-center mt-5">
+            <Button
+              variant="danger"
+              onClick={this.toggleConfirm}
+              disabled={!!!checkedTasks.size}
+            >
+              <FontAwesomeIcon
+                className="mr-2"
+                icon={faTrashAlt}
+              ></FontAwesomeIcon>
+              Delete selected tasks
+            </Button>
+            <Button
+              className="ml-3"
+              variant="primary"
+              onClick={this.handleCheckAllTasks}
+            >
+              <FontAwesomeIcon
+                className="mr-2"
+                icon={faCheckSquare}
+              ></FontAwesomeIcon>
+              {checkedTasks.size === 0 ? "Check All" : "Remove Checked"}
+            </Button>
+          </Row>
+        </Container>
+        {isOpenModalTask && <AddTaskModal 
+          onHide={this.toggleOpenAddTaskModal}
+          onSubmit={this.handleSubmit}
+          isAnyTaskChecked={!!checkedTasks.size}
+        />}
+        {showConfirm && <Confirm onSubmit={this.handleDeleteCheckedTasks} onClose={this.toggleConfirm} size={checkedTasks.size}/>}
+      </>
     );
   }
 }
 
-ToDo.propTypes = {
-  Task: PropTypes.element,
-  AddTask: PropTypes.element
-}
+// ToDo.propTypes = {
+//   Task: PropTypes.element,
+//   AddTask: PropTypes.element,
+// };
 export default ToDo;

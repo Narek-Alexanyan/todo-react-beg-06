@@ -37,8 +37,9 @@ function Task({
           onChange={() => handleToggleCheckTask(task._id, isChecked)}
           checked={isChecked}
         />
+        <Card.Title>{index + 1}. {task.title}</Card.Title>
         <Card.Text>
-          {index + 1}. {task.title}
+          {task.description}
         </Card.Text>
         <Button variant="warning" disabled={isAnyTaskChecked}>
           <FontAwesomeIcon icon={faEdit} />
@@ -57,12 +58,16 @@ function Task({
 }
 
 Task.propTypes = {
-  task: PropTypes.object,
-  index: PropTypes.number,
-  removeTask: PropTypes.func,
-  handleToggleCheckTask: PropTypes.func,
-  isAnyTaskChecked: PropTypes.bool,
-  isChecked: PropTypes.bool
+  task: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired
+  }),
+  index: PropTypes.number.isRequired,
+  removeTask: PropTypes.func.isRequired,
+  handleToggleCheckTask: PropTypes.func.isRequired,
+  isAnyTaskChecked: PropTypes.bool.isRequired,
+  isChecked: PropTypes.bool.isRequired
 }
 
 export default React.memo(Task);
