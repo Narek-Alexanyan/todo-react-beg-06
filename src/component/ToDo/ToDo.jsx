@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-// import PropTypes from "prop-types";
 import AddTaskModal from "../AddTaskModal/AddTaskModal";
 import Task from "../Task/Task";
 import idGenerator from "../../idGenerator";
@@ -11,6 +10,8 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 
 import "./ToDo.scss";
 import Confirm from "../Confirm";
+import EditTaskModal from "../EditTaskModal/EditTaskModal";
+
 
 class ToDo extends Component {
   state = {
@@ -33,7 +34,8 @@ class ToDo extends Component {
     ],
     checkedTasks: new Set(),
     isOpenModalTask: false,
-    showConfirm: false
+    showConfirm: false,
+    editTask: null,
   };
   ColStyles = ["mt-2", "mb-2", "slide-bottom"];
 
@@ -72,7 +74,7 @@ class ToDo extends Component {
     this.setState({
       tasks,
       checkedTasks: new Set(),
-      showConfirm: false
+      showConfirm: false,
     });
   };
 
@@ -109,21 +111,46 @@ class ToDo extends Component {
     const tasks = [...this.state.tasks];
     tasks.push({
       ...formData,
-      _id: idGenerator()
+      _id: idGenerator(),
     });
     this.setState({
-      tasks
-    })
-  }
+      tasks,
+    });
+  };
 
-  toggleConfirm = ()=> {
+  toggleConfirm = () => {
     this.setState({
       showConfirm: !this.state.showConfirm
-    })
-  }
+    });
+  };
+
+  toggleEditModal = (task) => {
+
+    this.setState({
+      editTask: task,
+    });
+  };
+
+  handleSave = (editableTask) => {
+    const tasks = [...this.state.tasks];
+
+    let index = tasks.findIndex((task) => task._id === editableTask._id);
+
+    tasks[index] = editableTask;
+
+    this.setState({
+      tasks,
+    });
+  };
 
   render() {
-    const { checkedTasks, tasks, isOpenModalTask, showConfirm } = this.state;
+    const {
+      checkedTasks,
+      tasks,
+      isOpenModalTask,
+      showConfirm,
+      editTask,
+    } = this.state;
     const tasksList = tasks.map((task, index) => {
       return (
         <Col
@@ -139,6 +166,7 @@ class ToDo extends Component {
             index={index}
             removeTask={this.removeTask}
             handleToggleCheckTask={this.handleToggleCheckTask}
+            onEdit={this.toggleEditModal}
             isAnyTaskChecked={!!checkedTasks.size}
             isChecked={!!checkedTasks.has(task._id)}
           />
@@ -149,10 +177,13 @@ class ToDo extends Component {
       <>
         <Container>
           <Row className="justify-content-center flex-column">
-              <h1 className="text-center tracking-in-contract-bck">
-                ToDo List
-              </h1>
-              <Button className="ml-auto mr-auto" onClick={this.toggleOpenAddTaskModal}>Task Modal</Button>
+            <h1 className="text-center tracking-in-contract-bck">ToDo List</h1>
+            <Button
+              className="ml-auto mr-auto"
+              onClick={this.toggleOpenAddTaskModal}
+            >
+              Task Modal
+            </Button>
           </Row>
           <Row className="mt-5 justify-content-center">
             {tasksList.length ? (
@@ -188,19 +219,44 @@ class ToDo extends Component {
             </Button>
           </Row>
         </Container>
-        {isOpenModalTask && <AddTaskModal 
-          onHide={this.toggleOpenAddTaskModal}
-          onSubmit={this.handleSubmit}
-          isAnyTaskChecked={!!checkedTasks.size}
-        />}
-        {showConfirm && <Confirm onSubmit={this.handleDeleteCheckedTasks} onClose={this.toggleConfirm} size={checkedTasks.size}/>}
+        {isOpenModalTask && (
+          <AddTaskModal
+            onHide={this.toggleOpenAddTaskModal}
+            onSubmit={this.handleSubmit}
+            isAnyTaskChecked={!!checkedTasks.size}
+          />
+        )}
+        {/* {!!editTask || showConfirm ? (
+          <ModalTasks
+            data={editTask}
+            onSave={this.handleSave}
+            onClose={() => this.toggleEditModal(null)}
+            onHide={this.toggleOpenAddTaskModal}
+            onSubmit={this.handleSubmit}
+            isAnyTaskChecked={!!checkedTasks.size}
+          />
+        ) : (
+          false
+        )} */}
+
+        {!!editTask && (
+          <EditTaskModal
+            data={editTask}
+            onSave={this.handleSave}
+            onClose={() => this.toggleEditModal(null)}
+          />
+        )}
+
+        {showConfirm && (
+          <Confirm
+            onSubmit={this.handleDeleteCheckedTasks}
+            onClose={this.toggleConfirm}
+            size={checkedTasks.size}
+          />
+        )}
       </>
     );
   }
 }
 
-// ToDo.propTypes = {
-//   Task: PropTypes.element,
-//   AddTask: PropTypes.element,
-// };
 export default ToDo;

@@ -7,7 +7,7 @@ function Confirm(props) {
   return (
     <Modal show={true} onHide={props.onClose} centered>
       <Modal.Header closeButton>
-        <ModalTitle style={{color: '#dc3545'}}>Are you sure to remove {props.size}</ModalTitle>
+        <ModalTitle style={{color: '#dc3545'}}>Are you sure to remove {props.size} task(s)</ModalTitle>
       </Modal.Header>
       <ModalBody>
         if you delete these tasks, you will no longer be able to return them!

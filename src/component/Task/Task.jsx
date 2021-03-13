@@ -14,6 +14,7 @@ function Task({
   handleToggleCheckTask,
   isAnyTaskChecked,
   isChecked,
+  onEdit
 }) {
   let addClass = () => {
     if (index % 2) {
@@ -41,7 +42,7 @@ function Task({
         <Card.Text>
           {task.description}
         </Card.Text>
-        <Button variant="warning" disabled={isAnyTaskChecked}>
+        <Button variant="warning" disabled={isAnyTaskChecked} onClick={()=> onEdit(task)}>
           <FontAwesomeIcon icon={faEdit} />
         </Button>
         <Button
