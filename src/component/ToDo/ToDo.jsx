@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import AddTaskModal from "../AddTaskModal/AddTaskModal";
+import TasksModal from "../TasksModal/TasksModal";
 import Task from "../Task/Task";
 import idGenerator from "../../idGenerator";
 
@@ -10,7 +10,6 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 
 import "./ToDo.scss";
 import Confirm from "../Confirm";
-import EditTaskModal from "../EditTaskModal/EditTaskModal";
 
 
 class ToDo extends Component {
@@ -220,30 +219,18 @@ class ToDo extends Component {
           </Row>
         </Container>
         {isOpenModalTask && (
-          <AddTaskModal
+          <TasksModal
             onHide={this.toggleOpenAddTaskModal}
             onSubmit={this.handleSubmit}
             isAnyTaskChecked={!!checkedTasks.size}
+            isOpenModalTask={isOpenModalTask}
           />
         )}
-        {/* {!!editTask || showConfirm ? (
-          <ModalTasks
-            data={editTask}
-            onSave={this.handleSave}
-            onClose={() => this.toggleEditModal(null)}
-            onHide={this.toggleOpenAddTaskModal}
-            onSubmit={this.handleSubmit}
-            isAnyTaskChecked={!!checkedTasks.size}
-          />
-        ) : (
-          false
-        )} */}
-
         {!!editTask && (
-          <EditTaskModal
-            data={editTask}
-            onSave={this.handleSave}
-            onClose={() => this.toggleEditModal(null)}
+          <TasksModal
+          data={editTask}
+          onSave={this.handleSave}
+          onClose={() => this.toggleEditModal(null)}
           />
         )}
 
