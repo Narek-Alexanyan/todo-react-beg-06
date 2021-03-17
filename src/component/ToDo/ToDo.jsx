@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import TasksModal from "../TasksModal/TasksModal";
 import Task from "../Task/Task";
-import idGenerator from "../../idGenerator";
+import dateFormatter from '../../utils/dateFormatter'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckSquare, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
@@ -11,26 +11,11 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import "./ToDo.scss";
 import Confirm from "../Confirm";
 
+const API_HOST = "http://localhost:3001";
 
 class ToDo extends Component {
   state = {
-    tasks: [
-      {
-        _id: idGenerator(),
-        title: "test-1",
-        description: "TAsk 1 description",
-      },
-      {
-        _id: idGenerator(),
-        title: "test-2",
-        description: "TAsk 2 description",
-      },
-      {
-        _id: idGenerator(),
-        title: "test-3",
-        description: "TAsk 4 description",
-      },
-    ],
+    tasks: [],
     checkedTasks: new Set(),
     isOpenModalTask: false,
     showConfirm: false,
@@ -38,20 +23,29 @@ class ToDo extends Component {
   };
   ColStyles = ["mt-2", "mb-2", "slide-bottom"];
 
-  handleSubmit = (value) => {
-    const tasks = [
-      ...this.state.tasks,
-      {
-        title: value,
-        _id: idGenerator(),
+  handleSubmit = (formData) => {
+    fetch(`${API_HOST}/task`, {
+      method: "POST",
+      body: JSON.stringify(formData),
+      headers: {
+        "Content-Type": "application/json",
       },
-    ];
-    this.setState({
-      tasks,
-    });
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw data.error;
+        const tasks = [...this.state.tasks];
+        tasks.push(data);
+        this.setState({
+          tasks,
+        });
+      })
+      .catch((error) => {
+        console.log("Add Task Error", error);
+      });
   };
 
-  handleToggleCheckTask = (id, checked) => {
+  handleToggleCheckTask = (id) => {
     let checkedTasks = new Set(this.state.checkedTasks);
 
     if (!checkedTasks.has(id)) {
@@ -67,23 +61,48 @@ class ToDo extends Component {
 
   handleDeleteCheckedTasks = () => {
     let { checkedTasks } = this.state;
-    let tasks = [...this.state.tasks];
-    tasks = tasks.filter((task) => !checkedTasks.has(task._id));
 
-    this.setState({
-      tasks,
-      checkedTasks: new Set(),
-      showConfirm: false,
-    });
+    fetch(`${API_HOST}/task`, {
+      method: "PATCH",
+      body: JSON.stringify({ tasks: Array.from(checkedTasks) }),
+      headers: {
+        "content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw data.error;
+        let tasks = [...this.state.tasks];
+        tasks = tasks.filter((task) => !checkedTasks.has(task._id));
+
+        this.setState({
+          tasks,
+          checkedTasks: new Set(),
+          showConfirm: false,
+        });
+      })
+      .catch((error) => {
+        console.log("Delete Batch of Tasks Error", error);
+      });
   };
 
   removeTask = (_id) => {
     let tasks = [...this.state.tasks];
 
-    tasks = tasks.filter((task) => task._id !== _id);
-    this.setState({
-      tasks,
-    });
+    fetch(`${API_HOST}/task/${_id}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw data.error;
+        tasks = tasks.filter((task) => task._id !== _id);
+        this.setState({
+          tasks,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   handleCheckAllTasks = () => {
@@ -106,25 +125,13 @@ class ToDo extends Component {
     });
   };
 
-  handleSubmit = (formData) => {
-    const tasks = [...this.state.tasks];
-    tasks.push({
-      ...formData,
-      _id: idGenerator(),
-    });
-    this.setState({
-      tasks,
-    });
-  };
-
   toggleConfirm = () => {
     this.setState({
-      showConfirm: !this.state.showConfirm
+      showConfirm: !this.state.showConfirm,
     });
   };
 
   toggleEditModal = (task) => {
-
     this.setState({
       editTask: task,
     });
@@ -133,14 +140,47 @@ class ToDo extends Component {
   handleSave = (editableTask) => {
     const tasks = [...this.state.tasks];
 
-    let index = tasks.findIndex((task) => task._id === editableTask._id);
+    const formData = {
+      title: editableTask.title,
+      description: editableTask.description,
+      date: dateFormatter(editableTask.date)
+    }
 
-    tasks[index] = editableTask;
+    fetch(`${API_HOST}/task/${editableTask._id}`, {
+      method: "PUT",
+      body: JSON.stringify(formData),
+      headers: {
+        "content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw data.error;
+        let index = tasks.findIndex((task) => task._id === data._id);
+        tasks[index] = data;
 
-    this.setState({
-      tasks,
-    });
+        this.setState({
+          tasks
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
+
+  componentDidMount() {
+    fetch(`${API_HOST}/task`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw data.error;
+        this.setState({
+          tasks: data,
+        });
+      })
+      .catch((error) => {
+        console.log("Get All Tasks, error", error);
+      });
+  }
 
   render() {
     const {
@@ -228,9 +268,9 @@ class ToDo extends Component {
         )}
         {!!editTask && (
           <TasksModal
-          data={editTask}
-          onSave={this.handleSave}
-          onClose={() => this.toggleEditModal(null)}
+            data={editTask}
+            onSave={this.handleSave}
+            onClose={() => this.toggleEditModal(null)}
           />
         )}
 

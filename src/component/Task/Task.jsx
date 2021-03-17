@@ -42,6 +42,9 @@ function Task({
         <Card.Text>
           {task.description}
         </Card.Text>
+        <Card.Text>
+          {task.date.slice(0, 10)}
+        </Card.Text>
         <Button variant="warning" disabled={isAnyTaskChecked} onClick={()=> onEdit(task)}>
           <FontAwesomeIcon icon={faEdit} />
         </Button>
