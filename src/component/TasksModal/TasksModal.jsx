@@ -162,6 +162,7 @@ class TasksModal extends React.PureComponent {
                 value={description}
                 onChange={this.handleChange}
               />
+              <DatePicker selected={date} onChange={date => this.setDate(date)}/>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="primary" onClick={this.handleSave}>
