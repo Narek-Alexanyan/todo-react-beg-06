@@ -15,7 +15,7 @@ class TasksModal extends React.PureComponent {
       description: "",
       errorMessage: false,
       ...props.data,
-      date: new Date()
+      date: props.data ? new Date(props.data.date) : new Date()
     };
   }
 

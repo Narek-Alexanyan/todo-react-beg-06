@@ -70,6 +70,9 @@ class ToDo extends Component {
 
   handleDeleteCheckedTasks = () => {
     let { checkedTasks } = this.state;
+    this.setState({
+      loading: true
+    })
 
     fetch(`${API_HOST}/task`, {
       method: "PATCH",
@@ -92,11 +95,19 @@ class ToDo extends Component {
       })
       .catch((error) => {
         console.log("Delete Batch of Tasks Error", error);
-      });
+      })
+      .finally(()=> {
+        this.setState({
+          loading: false
+        })
+      })
   };
 
   removeTask = (_id) => {
     let tasks = [...this.state.tasks];
+    this.setState({
+      loading: true
+    })
 
     fetch(`${API_HOST}/task/${_id}`, {
       method: "DELETE",
@@ -111,7 +122,12 @@ class ToDo extends Component {
       })
       .catch((error) => {
         console.log(error);
-      });
+      })
+      .finally(()=> {
+        this.setState({
+          loading: false
+        })
+      })
   };
 
   handleCheckAllTasks = () => {
@@ -187,6 +203,9 @@ class ToDo extends Component {
   };
 
   componentDidMount() {
+    this.setState({
+      loading: true
+    })
     fetch(`${API_HOST}/task`)
       .then((res) => res.json())
       .then((data) => {
@@ -197,7 +216,12 @@ class ToDo extends Component {
       })
       .catch((error) => {
         console.log("Get All Tasks, error", error);
-      });
+      })
+      .finally(()=> {
+        this.setState({
+          loading: false
+        })
+      })
   }
 
   render() {

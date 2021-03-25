@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import styles from "./singleTask.module.css";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faEdit, faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import TaskModal from "../../component/TasksModal/TasksModal";
 
 
@@ -13,6 +13,7 @@ class SingleTask extends Component {
   state = {
     singleTask: null,
     isEditModal: false,
+    ...this.props
   };
 
   toggleEditModal = () => {
@@ -22,6 +23,10 @@ class SingleTask extends Component {
   };
 
   handleEditTask = (editTask) => {
+    console.log(this.state);
+    this.setState({
+      show: true
+    })
     const formData = {
       title: editTask.title,
       description: editTask.description,
@@ -44,7 +49,12 @@ class SingleTask extends Component {
       })
       .catch((error) => {
         console.log("SingleTask ,Edit Task Request Error", error);
-      });
+      })
+      .finally(()=> {
+        this.setState({
+          show: false
+        })
+      })
   };
 
   handleDeleteTask = () => {
@@ -62,6 +72,10 @@ class SingleTask extends Component {
       });
   };
 
+  goBack = () => {
+    this.props.history.go(-1)
+  }
+
   componentDidMount() {
     const { id } = this.props.match.params;
     fetch(`${API_HOST}/task/${id}`)
@@ -73,6 +87,7 @@ class SingleTask extends Component {
         });
       })
       .catch((error) => {
+        this.props.history.push("/404")
         console.log("Single Task Get Request error", error);
       });
   }
@@ -140,6 +155,10 @@ class SingleTask extends Component {
       );
     return (
       <div className={styles.singleTask}>
+        <Button onClick={this.goBack} >
+          <FontAwesomeIcon icon={faArrowCircleLeft} />
+          Go Back
+        </Button>
         <h1>SingleTask</h1>
         <div className={styles.singleTaskSection}>
           <p>
