@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import TasksModal from "../TasksModal/TasksModal";
-import Task from "../Task/Task";
-import dateFormatter from '../../utils/dateFormatter'
+import TasksModal from "../../TasksModal/TasksModal";
+import Task from "../../Task/Task";
+import Spinner from '../../Spinner/Spinner'
+import dateFormatter from '../../../utils/dateFormatter'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckSquare, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
@@ -9,7 +10,7 @@ import { faCheckSquare, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 import "./ToDo.scss";
-import Confirm from "../Confirm";
+import Confirm from "../../Confirm";
 
 const API_HOST = "http://localhost:3001";
 
@@ -20,10 +21,12 @@ class ToDo extends Component {
     isOpenModalTask: false,
     showConfirm: false,
     editTask: null,
+    loading: false
   };
   ColStyles = ["mt-2", "mb-2", "slide-bottom"];
 
   handleSubmit = (formData) => {
+    this.setState({loading: true})
     fetch(`${API_HOST}/task`, {
       method: "POST",
       body: JSON.stringify(formData),
@@ -38,11 +41,17 @@ class ToDo extends Component {
         tasks.push(data);
         this.setState({
           tasks,
+          isOpenModalTask: false
         });
       })
       .catch((error) => {
         console.log("Add Task Error", error);
-      });
+      })
+      .finally(()=> {
+        this.setState({
+          loading: false
+        })
+      })
   };
 
   handleToggleCheckTask = (id) => {
@@ -145,6 +154,9 @@ class ToDo extends Component {
       description: editableTask.description,
       date: dateFormatter(editableTask.date)
     }
+    this.setState({
+      loading: true
+    })
 
     fetch(`${API_HOST}/task/${editableTask._id}`, {
       method: "PUT",
@@ -160,12 +172,18 @@ class ToDo extends Component {
         tasks[index] = data;
 
         this.setState({
-          tasks
+          tasks,
+          editTask: null
         });
       })
       .catch((error) => {
         console.log(error);
-      });
+      })
+      .finally(()=> {
+        this.setState({
+          loading: false
+        })
+      })
   };
 
   componentDidMount() {
@@ -189,6 +207,7 @@ class ToDo extends Component {
       isOpenModalTask,
       showConfirm,
       editTask,
+      loading
     } = this.state;
     const tasksList = tasks.map((task, index) => {
       return (
@@ -281,6 +300,9 @@ class ToDo extends Component {
             size={checkedTasks.size}
           />
         )}
+        {
+          loading && <Spinner />
+        }
       </>
     );
   }

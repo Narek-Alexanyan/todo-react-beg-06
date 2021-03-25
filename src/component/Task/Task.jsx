@@ -1,5 +1,6 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+import { withRouter, Link } from "react-router-dom";
 
 import Styles from "./Task.module.css";
 
@@ -14,7 +15,7 @@ function Task({
   handleToggleCheckTask,
   isAnyTaskChecked,
   isChecked,
-  onEdit
+  onEdit,
 }) {
   let addClass = () => {
     if (index % 2) {
@@ -23,8 +24,6 @@ function Task({
       return Styles.card__bg2;
     }
   };
-
-
 
   const classes = [addClass()];
   if (isChecked) classes.push(Styles.checked);
@@ -38,14 +37,16 @@ function Task({
           onChange={() => handleToggleCheckTask(task._id, isChecked)}
           checked={isChecked}
         />
-        <Card.Title>{index + 1}. {task.title}</Card.Title>
-        <Card.Text>
-          {task.description}
-        </Card.Text>
-        <Card.Text>
-          {task.date.slice(0, 10)}
-        </Card.Text>
-        <Button variant="warning" disabled={isAnyTaskChecked} onClick={()=> onEdit(task)}>
+        <Card.Title>
+          {index + 1}.<Link to={`/task/${task._id}`}> {task.title}</Link>
+        </Card.Title>
+        <Card.Text>{task.description}</Card.Text>
+        <Card.Text>{task.date.slice(0, 10)}</Card.Text>
+        <Button
+          variant="warning"
+          disabled={isAnyTaskChecked}
+          onClick={() => onEdit(task)}
+        >
           <FontAwesomeIcon icon={faEdit} />
         </Button>
         <Button
@@ -65,13 +66,13 @@ Task.propTypes = {
   task: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired
+    description: PropTypes.string.isRequired,
   }),
   index: PropTypes.number.isRequired,
   removeTask: PropTypes.func.isRequired,
   handleToggleCheckTask: PropTypes.func.isRequired,
   isAnyTaskChecked: PropTypes.bool.isRequired,
-  isChecked: PropTypes.bool.isRequired
-}
+  isChecked: PropTypes.bool.isRequired,
+};
 
-export default React.memo(Task);
+export default withRouter(React.memo(Task));
