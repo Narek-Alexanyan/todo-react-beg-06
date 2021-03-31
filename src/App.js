@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-datepicker/dist/react-datepicker.css";
 import About from './component/pages/About/About';
 import Contacts from './component/pages/Contacts/Contacts';
-import NotFound from './component/pages/404/NotFound';
+import ErrorPage from './component/pages/404/ErrorPage';
 import SingleTask from './component/SingleTask/SingleTask';
 
 const pages = [
@@ -33,8 +33,8 @@ const pages = [
     exact: true
   },
   {
-    path: "/404",
-    component: NotFound,
+    path: "/error/:status",
+    component: ErrorPage,
     exact: true
   }
 ];
@@ -56,7 +56,7 @@ function App() {
       <Navbar />
       <Switch>
         {pagesJsx}
-        <Redirect to="/404" />
+        <Redirect to="/error/404" />
       </Switch>
 
     </div>

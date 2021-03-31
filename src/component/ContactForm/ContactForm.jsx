@@ -3,7 +3,16 @@ import { Form, Button } from "react-bootstrap";
 import styles from "./ContactForm.module.css";
 import Spinner from "../Spinner/Spinner";
 import { withRouter } from "react-router";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+import {
+  isRequired,
+  maxLength,
+  minLength,
+  validateEmail,
+} from "../../utils/validators";
+
+const maxLength30 = maxLength(30);
+const minLength1 = minLength(1);
 
 const inputsInfo = [
   {
@@ -35,29 +44,66 @@ const API_HOST = "http://localhost:3001";
 
 class ContactForm extends Component {
   state = {
-    name: "",
-    email: "",
-    message: "",
+    name: {
+      valid: false,
+      error: null,
+      value: "",
+    },
+    email: {
+      valid: false,
+      error: null,
+      value: "",
+    },
+    message: {
+      valid: false,
+      error: null,
+      value: "",
+    },
     loading: false,
+    errorMessage: "",
   };
 
   handleChange = (e) => {
     const { name, value } = e.target;
 
+    let valid = true;
+
+    let error =
+      isRequired(value) ||
+      maxLength30(value) ||
+      minLength1(value) ||
+      (name === "email" && validateEmail(value));
+    if (error) valid = false;
+
     this.setState({
-      [name]: value,
+      [name]: {
+        valid: valid,
+        error: error,
+        value: value,
+      },
     });
   };
+
   handleSubmit = () => {
+    const formData = {
+      ...this.state,
+    };
+    for (let key in formData) {
+      if (
+        typeof formData[key] === "object" &&
+        formData[key].hasOwnProperty("value")
+      ) {
+        formData[key] = formData[key].value;
+      } else {
+        delete formData[key];
+      }
+    }
+
     this.setState({
       loading: true,
+      errorMessage: null,
     });
-    const { name, email, message } = this.state;
-    const formData = {
-      name: name,
-      email: email,
-      message: message,
-    };
+
     fetch(`${API_HOST}/form`, {
       method: "POST",
       body: JSON.stringify(formData),
@@ -71,16 +117,20 @@ class ContactForm extends Component {
         this.setState({
           loading: false,
         });
-        this.props.history.push('/')
+        this.props.history.push("/");
       })
       .catch((error) => {
         console.log("Form error", error);
         this.setState({
-            loading: false,
-          });
-      })
+          loading: false,
+          errorMessage: error.message,
+        });
+      });
   };
+
+
   render() {
+    const { name, email, message } = this.state
     const inputsJsx = inputsInfo.map((input, index) => {
       return (
         <Form.Group controlId={input.controlId} key={index}>
@@ -90,10 +140,13 @@ class ContactForm extends Component {
             type={input.type}
             placeholder={input.placeholder}
             as={input.as && input.as}
-            value={this.state[input.name]}
+            value={this.state[input.name].value}
             rows={input.rows && input.rows}
             onChange={this.handleChange}
           />
+          <Form.Text className={styles.form__invalid_text}>
+            {this.state[input.name].error}
+          </Form.Text>
         </Form.Group>
       );
     });
@@ -101,9 +154,22 @@ class ContactForm extends Component {
       <>
         {this.state.loading && <Spinner />}
         <Form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+          {this.state.errorMessage && (
+            <h3 className={styles.slideInTop}>
+              {this.state.errorMessage.slice(6)}
+            </h3>
+          )}
           {inputsJsx}
 
-          <Button variant="primary" type="submit" onClick={this.handleSubmit}>
+          <Button
+            variant="primary"
+            type="submit"
+            onClick={this.handleSubmit}
+            disabled={name.error || 
+              email.error ||
+              message.error
+            }
+          >
             Submit
           </Button>
         </Form>
@@ -113,7 +179,7 @@ class ContactForm extends Component {
 }
 
 ContactForm.propTypes = {
-    history: PropTypes.object
-}
+  history: PropTypes.object,
+};
 
 export default withRouter(ContactForm);
