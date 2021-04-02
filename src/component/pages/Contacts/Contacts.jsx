@@ -1,10 +1,12 @@
 import ContactForm from "../../ContactForm/ContactForm";
+import ContactFormFuncComponent from "../../ContactForm/ContactFormFuncComponent";
 
 
 function Contacts() {
   return (
     <div>
-        <ContactForm />
+        {/* <ContactForm /> */}
+        <ContactFormFuncComponent />
     </div>
   );
 }
