@@ -4,7 +4,6 @@ import styles from "./NotFound.module.scss";
 
 function ErrorPage(props) {
   const { status } = props.match.params;
-  console.log(status);
 
   const pushAction = () => {
     props.history.push("/");

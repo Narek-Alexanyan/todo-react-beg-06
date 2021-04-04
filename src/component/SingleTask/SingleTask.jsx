@@ -27,6 +27,7 @@ class SingleTask extends Component {
   };
 
   handleEditTask = (editTask) => {
+    console.log(editTask);
     this.setState({
       loading: true,
     });

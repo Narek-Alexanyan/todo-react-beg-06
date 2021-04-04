@@ -9,7 +9,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import About from './component/pages/About/About';
 import Contacts from './component/pages/Contacts/Contacts';
 import ErrorPage from './component/pages/404/ErrorPage';
-import SingleTask from './component/SingleTask/SingleTask';
+import SingleTaskProvider from './Context/providers/SingleTaskProvider';
+import SingleTaskHook from './component/SingleTask/SingleTaskHook';
+
 
 const pages = [
   {
@@ -25,11 +27,6 @@ const pages = [
   {
     path: "/about",
     component: About,
-    exact: true
-  },
-  {
-    path: "/task/:id",
-    component: SingleTask,
     exact: true
   },
   {
@@ -55,6 +52,14 @@ function App() {
     <div className="App">
       <Navbar />
       <Switch>
+        <Route
+          path="/task/:id"
+          exact={true}
+        >
+          <SingleTaskProvider>
+            <SingleTaskHook />
+          </SingleTaskProvider>
+        </Route>
         {pagesJsx}
         <Redirect to="/error/404" />
       </Switch>
