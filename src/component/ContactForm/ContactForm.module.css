@@ -1,0 +1,42 @@
+.form {
+    width: 600px;
+    max-width: 100%;
+    margin: 50px auto 0;
+}
+
+
+.slideInTop {
+    color: rgb(206, 50, 50);
+    margin-bottom: 50px;
+	-webkit-animation: slide-in-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+	        animation: slide-in-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+@-webkit-keyframes slide-in-top {
+    0% {
+      -webkit-transform: translateY(-80px);
+              transform: translateY(-80px);
+      opacity: 0;
+    }
+    100% {
+      -webkit-transform: translateY(0);
+              transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes slide-in-top {
+    0% {
+      -webkit-transform: translateY(-80px);
+              transform: translateY(-80px);
+      opacity: 0;
+    }
+    100% {
+      -webkit-transform: translateY(0);
+              transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .form__invalid_text {
+      color: rgb(206, 50, 50);
+  }
